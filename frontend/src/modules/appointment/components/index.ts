@@ -1,0 +1,1 @@
+export { BarberAppointmentManagement } from "./BarberAppointmentManagement";
