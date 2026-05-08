@@ -7,7 +7,7 @@ copy.bara.sky
 secrets/
 config/
 serviceImpl/
-application.properties
+# application.properties
 modules/auth/security/util/
 modules/auth/controller/
 .docs/
