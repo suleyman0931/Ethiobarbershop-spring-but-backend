@@ -78,9 +78,9 @@ export const BarberAppointmentManagement: React.FC<BarberAppointmentManagementPr
           <h3 className="text-lg font-semibold text-slate-900">Appointment Details</h3>
           <span
             className={`px-3 py-1 rounded-full text-xs font-medium ${
-              appointment.status === "PENDING"
+              appointment.status === "PENDING_PAYMENT" || appointment.status === "PAYMENT_SUBMITTED"
                 ? "bg-yellow-100 text-yellow-800"
-                : appointment.status === "CONFIRMED"
+                : appointment.status === "CONFIRMED" || appointment.status === "ASSIGNED_TO_BARBER"
                 ? "bg-blue-100 text-blue-800"
                 : appointment.status === "COMPLETED"
                 ? "bg-green-100 text-green-800"
@@ -115,7 +115,7 @@ export const BarberAppointmentManagement: React.FC<BarberAppointmentManagementPr
       )}
 
       {/* Action Buttons */}
-      {appointment.status === "PENDING" && (
+      {(appointment.status === "PENDING_PAYMENT" || appointment.status === "PAYMENT_SUBMITTED") && (
         <div className="flex gap-2">
           <Button
             onClick={handleApprove}
@@ -138,7 +138,7 @@ export const BarberAppointmentManagement: React.FC<BarberAppointmentManagementPr
         </div>
       )}
 
-      {appointment.status === "CONFIRMED" && (
+      {(appointment.status === "CONFIRMED" || appointment.status === "ASSIGNED_TO_BARBER") && (
         <div className="flex gap-2">
           <Button
             onClick={handleComplete}
