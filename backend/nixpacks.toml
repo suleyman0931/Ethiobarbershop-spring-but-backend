@@ -2,10 +2,15 @@
 nixPkgs = ["jdk21", "maven"]
 
 [phases.install]
-cmds = ["mvn --version"]
+cmds = [
+  "java -version",
+  "mvn --version",
+  "export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))"
+]
 
 [phases.build]
 cmds = [
+  "export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))",
   "mvn clean package -DskipTests",
   "ls -la target/"
 ]
