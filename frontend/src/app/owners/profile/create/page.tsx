@@ -40,7 +40,7 @@ export default function CreateOwnerProfilePage() {
         await imageService.uploadOwnerImage(newProfile.ownerId, selectedFile);
       }
 
-      router.push("/owners/my-shops");
+      router.push("/owners/dashboard");
     } catch (error) {
       console.error("Create Owner Profile error:", error);
       alert("Failed to create profile or upload image.");

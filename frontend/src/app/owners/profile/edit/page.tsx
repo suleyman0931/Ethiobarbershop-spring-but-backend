@@ -43,7 +43,7 @@ export default function EditOwnerProfilePage() {
   const onSubmit = async (data: OwnerPayload) => {
     try {
       await ownerService.updateOwnerProfile(data);
-      router.push("/owners/my-shops");
+      router.push("/owners/dashboard");
     } catch (error) {
       console.error("Update Owner Profile error:", error);
     }
