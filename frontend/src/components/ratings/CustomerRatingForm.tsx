@@ -5,6 +5,7 @@ import { Button } from "@/modules/shadcn/ui/button";
 import { Alert, AlertDescription } from "@/modules/shadcn/ui/alert";
 import { useCreateRating } from "@/hooks/useRatings";
 import { ratingSchema, type RatingFormData } from "@/schemas/ratingSchema";
+import type { RatingRequest } from "@/types/rating";
 import { Star, AlertCircle } from "lucide-react";
 
 interface CustomerRatingFormProps {
@@ -62,7 +63,13 @@ export const CustomerRatingForm: React.FC<CustomerRatingFormProps> = ({
   };
 
   const onSubmit = (data: RatingFormData) => {
-    createRatingMutation.mutate(data, {
+    const ratingRequest: RatingRequest = {
+      appointmentId: data.appointmentId,
+      ratingScore: data.ratingScore,
+      reviewText: data.reviewText,
+    };
+    
+    createRatingMutation.mutate(ratingRequest, {
       onSuccess: () => {
         reset();
         setValue("ratingScore", 0);
