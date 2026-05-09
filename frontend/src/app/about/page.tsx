@@ -112,15 +112,16 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Developer Image Placeholder */}
+          {/* Developer Image */}
           <div className="flex justify-center">
-            <div className="w-64 h-64 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border-2 border-white/20">
-              <div className="text-center">
-                <div className="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Code className="w-16 h-16 text-white" />
-                </div>
-                <p className="text-sm text-blue-100">Developer Photo</p>
-                <p className="text-xs text-blue-200 mt-1">Add your photo here</p>
+            <div className="relative">
+              <img 
+                src="/suleyman.png" 
+                alt="Suleyman Abdu Mohammed" 
+                className="w-64 h-64 rounded-2xl object-cover shadow-2xl border-4 border-white/20"
+              />
+              <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                <Code className="w-10 h-10 text-blue-600" />
               </div>
             </div>
           </div>
