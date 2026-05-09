@@ -185,7 +185,7 @@ export default function MyAppointmentsPage() {
             </div>
           ) : (
             filteredAppointments.map((appt: AppointmentResponse) => (
-            <div key={appt.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+              <div key={appt.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
               {/* Header with Booking ID and Status */}
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -277,7 +277,8 @@ export default function MyAppointmentsPage() {
                 </div>
               )}
             </div>
-          ))}
+            ))
+          )}
         </div>
       )}
     </div>
