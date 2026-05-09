@@ -35,4 +35,8 @@ export class BarberServiceImpl implements BarberService {
   async updateBarberProfile(payload: Partial<BarberPayload>): Promise<BarberResponse> {
     return apiClient.put<BarberResponse>("/barbers/me", payload);
   }
+
+  async deleteBarberProfile(): Promise<void> {
+    return apiClient.delete<void>("/barbers/me");
+  }
 }

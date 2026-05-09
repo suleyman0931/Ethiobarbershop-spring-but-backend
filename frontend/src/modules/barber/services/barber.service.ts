@@ -11,4 +11,5 @@ export interface BarberService {
   getBarberProfile(): Promise<BarberResponse>;
   createBarberProfile(payload: Partial<BarberPayload>): Promise<BarberResponse>;
   updateBarberProfile(payload: Partial<BarberPayload>): Promise<BarberResponse>;
+  deleteBarberProfile(): Promise<void>;
 }
