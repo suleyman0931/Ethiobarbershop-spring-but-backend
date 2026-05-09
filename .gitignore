@@ -6,13 +6,9 @@ copy.bara.sky
 .env
 secrets/
 config/
-serviceImpl/
 # application.properties
-modules/auth/security/util/
-modules/auth/controller/
 .docs/
 .automation/
-*impl*
 uploads/
 
 
