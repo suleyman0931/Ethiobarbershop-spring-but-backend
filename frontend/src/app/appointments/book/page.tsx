@@ -118,13 +118,10 @@ function BookAppointmentContent() {
       // Step 2: Upload screenshot if file selected
       let finalScreenshotUrl = screenshotUrl;
       if (screenshotFile) {
-        const token = localStorage.getItem("accessToken");
-        if (!token) throw new Error("Authentication token not found. Please login again.");
-
         const profileResponse = await apiClient.get<any>("/customers/me");
         if (!profileResponse.customerId) throw new Error("Customer profile not found.");
 
-        const imageData = await uploadCustomerImage(profileResponse.customerId, screenshotFile, token);
+        const imageData = await uploadCustomerImage(profileResponse.customerId, screenshotFile, "");
         finalScreenshotUrl = imageData.fileUrl;
       }
 

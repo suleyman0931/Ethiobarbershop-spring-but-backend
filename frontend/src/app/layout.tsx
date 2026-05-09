@@ -72,7 +72,7 @@ function NavLinks() {
     navItems.push({ href: "/", label: "Home", icon: Home });
     navItems.push({ href: "/appointments", label: "My Bookings", icon: Calendar });
     navItems.push({ href: "/appointments/book", label: "Book Now", icon: Calendar });
-    navItems.push({ href: "/customers/hairstyle-recommendations", label: "Hairstyle AI", icon: Sparkles });
+    navItems.push({ href: "/customers/hairstyle-recommendations", label: "Hairstyles", icon: Sparkles });
   }
 
   return (

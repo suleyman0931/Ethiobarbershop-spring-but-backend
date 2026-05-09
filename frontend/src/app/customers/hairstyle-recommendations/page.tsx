@@ -11,10 +11,10 @@ export default function HairstyleRecommendationsPage() {
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Sparkles className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold">Hairstyle Recommendations</h1>
+            <h1 className="text-4xl font-bold">Popular Hairstyles</h1>
           </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover your perfect hairstyle with AI-powered recommendations. Upload your photo and let our advanced AI suggest the best hairstyles for you.
+            Browse trending hairstyles and find your perfect look. Save your favorites and show them to your barber at your next appointment.
           </p>
         </div>
 
@@ -23,23 +23,23 @@ export default function HairstyleRecommendationsPage() {
 
         {/* Info Section */}
         <div className="mt-12 bg-muted/50 rounded-lg p-6">
-          <h3 className="font-semibold text-lg mb-3">How it works</h3>
+          <h3 className="font-semibold text-lg mb-3">How to use this gallery</h3>
           <ol className="space-y-2 text-sm text-muted-foreground">
             <li className="flex gap-2">
               <span className="font-semibold text-primary">1.</span>
-              <span>Upload a clear photo of yourself (front-facing works best)</span>
+              <span>Browse through our curated collection of popular hairstyles</span>
             </li>
             <li className="flex gap-2">
               <span className="font-semibold text-primary">2.</span>
-              <span>Our AI analyzes your facial features and face shape</span>
+              <span>Filter by category (Short, Medium) to find styles that match your preference</span>
             </li>
             <li className="flex gap-2">
               <span className="font-semibold text-primary">3.</span>
-              <span>Get personalized hairstyle recommendations with match scores</span>
+              <span>Save or screenshot your favorite styles</span>
             </li>
             <li className="flex gap-2">
               <span className="font-semibold text-primary">4.</span>
-              <span>Book an appointment with your favorite style!</span>
+              <span>Show the images to your barber when you book your appointment</span>
             </li>
           </ol>
         </div>

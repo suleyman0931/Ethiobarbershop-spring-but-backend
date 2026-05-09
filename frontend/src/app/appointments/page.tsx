@@ -1,12 +1,11 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tantml:react-query";
 import { useState } from "react";
 import Link from "next/link";
 import { appointmentService } from "@/modules/appointment/services/appointment.service";
 import type { AppointmentResponse } from "@/modules/appointment/types/appointment.types";
 import { CustomerRatingForm } from "@/components/ratings/CustomerRatingForm";
-import { getMyRatings } from "@/api/ratings";
 import { Calendar, Clock, Plus, Star, ChevronDown, ChevronUp, CheckCircle, Hash } from "lucide-react";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -57,18 +56,12 @@ export default function MyAppointmentsPage() {
     queryFn: appointmentService.getMyAppointments,
   });
 
-  const { data: myRatings = [] } = useQuery({
-    queryKey: ["my-ratings"],
-    queryFn: getMyRatings,
-  });
-
   const cancelMutation = useMutation({
     mutationFn: (id: number) => appointmentService.cancel(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-appointments"] }),
   });
 
-  const hasRating = (appointmentId: number) =>
-    justRated.has(appointmentId) || myRatings.some(r => r.appointmentId === appointmentId);
+  const hasRating = (appointmentId: number) => justRated.has(appointmentId);
 
   const toggleRatingForm = (appointmentId: number) => {
     setOpenRatingForms(prev => {
@@ -85,7 +78,6 @@ export default function MyAppointmentsPage() {
       next.delete(appointmentId);
       return next;
     });
-    queryClient.invalidateQueries({ queryKey: ["my-ratings"] });
   };
 
   if (isLoading) {

@@ -2,6 +2,8 @@
  * API client methods for image upload
  */
 
+import { apiClient } from "@/lib/api";
+
 export interface ImageUploadResponse {
   id: number;
   fileName: string;
@@ -18,19 +20,6 @@ export const uploadCustomerImage = async (
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`/api/images/customers/${customerId}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Image upload failed:', response.status, errorText);
-    throw new Error(`Failed to upload image: ${response.statusText} - ${errorText}`);
-  }
-
-  return response.json();
+  // Use apiClient which handles the full backend URL
+  return apiClient.post<ImageUploadResponse>(`/images/customers/${customerId}`, formData);
 };
