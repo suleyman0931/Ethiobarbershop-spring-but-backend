@@ -121,15 +121,10 @@ function BookAppointmentContent() {
         const token = localStorage.getItem("accessToken");
         if (!token) throw new Error("Authentication token not found. Please login again.");
 
-        const profileResponse = await fetch("/api/customers/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!profileResponse.ok) throw new Error("Failed to load customer profile.");
+        const profileResponse = await apiClient.get<any>("/customers/me");
+        if (!profileResponse.customerId) throw new Error("Customer profile not found.");
 
-        const customerProfile = await profileResponse.json();
-        if (!customerProfile.customerId) throw new Error("Customer profile not found.");
-
-        const imageData = await uploadCustomerImage(customerProfile.customerId, screenshotFile, token);
+        const imageData = await uploadCustomerImage(profileResponse.customerId, screenshotFile, token);
         finalScreenshotUrl = imageData.fileUrl;
       }
 
