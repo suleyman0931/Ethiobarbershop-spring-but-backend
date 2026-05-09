@@ -268,6 +268,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <h4 className="font-bold mb-4">Quick Links</h4>
                   <ul className="space-y-2 text-sm text-slate-400">
                     <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
+                    <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
                     <li><Link href="/appointments/book" className="hover:text-white transition-colors">Book Appointment</Link></li>
                     <li><Link href="/login" className="hover:text-white transition-colors">Login</Link></li>
                     <li><Link href="/signup" className="hover:text-white transition-colors">Sign Up</Link></li>
