@@ -30,10 +30,21 @@ export default function OwnerDashboardPage() {
     queryFn: getPendingPayments,
   });
 
+  // Fetch appointments count from first branch if available
+  const firstBranchId = branches?.[0]?.id;
+  const { data: appointments = [] } = useQuery({
+    queryKey: ["branchAppointments", firstBranchId],
+    queryFn: () =>
+      firstBranchId
+        ? apiClient.get<any[]>(`/appointments/shop/${firstBranchId}`)
+        : Promise.resolve([]),
+    enabled: !!firstBranchId,
+  });
+
   const stats: DashboardStats = {
     totalBranches: branches?.length || 0,
     totalBarbers: barbers?.length || 0,
-    totalAppointments: 0, // TODO: Implement appointments count
+    totalAppointments: appointments.length,
     activeBarbers: barbers?.length || 0,
   };
 
@@ -87,6 +98,9 @@ export default function OwnerDashboardPage() {
               <span className="text-2xl font-black text-slate-900">{stats.totalAppointments}</span>
             </div>
             <h3 className="text-sm font-medium text-slate-600">Appointments</h3>
+            <Link href="/owners/appointments" className="text-xs text-purple-600 hover:underline mt-1 block">
+              View all →
+            </Link>
           </div>
 
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
@@ -220,6 +234,14 @@ export default function OwnerDashboardPage() {
           <h2 className="text-xl font-bold text-slate-900 mb-4">Quick Links</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link
+              href="/owners/appointments"
+              className="flex flex-col items-center justify-center p-6 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors group"
+            >
+              <Calendar className="w-8 h-8 text-purple-600 mb-2" />
+              <span className="text-sm font-semibold text-slate-900">All Appointments</span>
+            </Link>
+
+            <Link
               href="/owners/branches"
               className="flex flex-col items-center justify-center p-6 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors group"
             >
@@ -233,14 +255,6 @@ export default function OwnerDashboardPage() {
             >
               <Users className="w-8 h-8 text-green-600 mb-2" />
               <span className="text-sm font-semibold text-slate-900">Manage Barbers</span>
-            </Link>
-
-            <Link
-              href="/owners/profile/edit"
-              className="flex flex-col items-center justify-center p-6 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors group"
-            >
-              <Users className="w-8 h-8 text-purple-600 mb-2" />
-              <span className="text-sm font-semibold text-slate-900">My Profile</span>
             </Link>
 
             <Link
