@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
@@ -27,7 +27,7 @@ const PAYMENT_METHODS = {
 
 type BookingStep = "form" | "payment" | "complete";
 
-export default function BookAppointmentPage() {
+function BookAppointmentContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedBarberId = searchParams.get("barberId");
@@ -464,5 +464,21 @@ export default function BookAppointmentPage() {
         </button>
       </form>
     </div>
+  );
+}
+
+
+export default function BookAppointmentPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center">
+          <Loader2 className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
+          <p className="text-slate-600">Loading booking form...</p>
+        </div>
+      </div>
+    }>
+      <BookAppointmentContent />
+    </Suspense>
   );
 }
