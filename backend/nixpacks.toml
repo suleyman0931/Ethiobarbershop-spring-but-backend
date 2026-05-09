@@ -5,4 +5,4 @@ nixPkgs = ["jdk21", "maven"]
 cmds = ["mvn clean package -DskipTests"]
 
 [start]
-cmd = "java -Dserver.port=$PORT -jar target/barbershop-backend-0.0.1-SNAPSHOT.jar"
+cmd = "java -Dserver.port=${PORT:-8080} -jar target/barbershop-backend-0.0.1-SNAPSHOT.jar"
