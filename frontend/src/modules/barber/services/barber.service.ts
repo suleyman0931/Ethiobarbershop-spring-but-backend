@@ -6,4 +6,9 @@ export interface BarberService {
   createBarber(payload: BarberPayload): Promise<BarberResponse>;
   updateBarber(id: string, payload: Partial<BarberPayload>): Promise<BarberResponse>;
   deleteBarber(id: string): Promise<void>;
+  
+  // Barber managing their own profile
+  getBarberProfile(): Promise<BarberResponse>;
+  createBarberProfile(payload: Partial<BarberPayload>): Promise<BarberResponse>;
+  updateBarberProfile(payload: Partial<BarberPayload>): Promise<BarberResponse>;
 }
