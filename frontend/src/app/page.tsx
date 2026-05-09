@@ -7,6 +7,7 @@ import { apiClient } from "@/lib/api";
 import type { BarberResponse } from "@/modules/barber/types/barber.types";
 import { useAuthStore } from "@/stores/auth.store";
 import { WeatherWidget } from "@/components/weather/WeatherWidget";
+import ImageGallery from "@/components/gallery/ImageGallery";
 
 export default function Home() {
   const { user } = useAuthStore();
@@ -139,6 +140,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Image Gallery */}
+      <ImageGallery />
 
       {/* Features */}
       <section>

@@ -149,11 +149,21 @@ export default function BookAppointmentPage() {
     }
   };
 
-  // Time slots 8am–6pm in 30-min increments
-  const timeSlots = Array.from({ length: 20 }, (_, i) => {
-    const hour = Math.floor(i / 2) + 8;
+  // Time slots 2am–5pm in 30-min increments (12-hour format)
+  const timeSlots = Array.from({ length: 30 }, (_, i) => {
+    const hour24 = Math.floor(i / 2) + 2; // Start at 2 AM
     const min = i % 2 === 0 ? "00" : "30";
-    return `${String(hour).padStart(2, "0")}:${min}`;
+    
+    // Convert to 12-hour format
+    const hour12 = hour24 > 12 ? hour24 - 12 : hour24 === 0 ? 12 : hour24;
+    const period = hour24 >= 12 ? "PM" : "AM";
+    
+    // Store in 24-hour format for backend
+    const value24 = `${String(hour24).padStart(2, "0")}:${min}`;
+    // Display in 12-hour format
+    const display12 = `${hour12}:${min} ${period}`;
+    
+    return { value: value24, display: display12 };
   });
 
   const today = new Date().toISOString().split("T")[0];
@@ -321,16 +331,16 @@ export default function BookAppointmentPage() {
           <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
             {timeSlots.map((slot) => (
               <button
-                key={slot}
+                key={slot.value}
                 type="button"
-                onClick={() => setTime(slot)}
+                onClick={() => setTime(slot.value)}
                 className={`py-2 rounded-lg text-sm font-medium border transition-all ${
-                  time === slot
+                  time === slot.value
                     ? "bg-blue-600 text-white border-blue-600"
                     : "border-slate-200 text-slate-700 hover:border-blue-300"
                 }`}
               >
-                {slot}
+                {slot.display}
               </button>
             ))}
           </div>

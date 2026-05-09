@@ -34,11 +34,22 @@ export const BarberAppointmentManagement: React.FC<BarberAppointmentManagementPr
 
   const error = approveMutation.error || completeMutation.error || cancelMutation.error;
 
-  const formatDateTime = (iso: string) =>
-    new Date(iso).toLocaleString("en-ET", {
+  const formatDateTime = (iso: string) => {
+    const date = new Date(iso);
+    const dateStr = date.toLocaleDateString("en-ET", {
       weekday: "short", month: "short", day: "numeric",
-      hour: "2-digit", minute: "2-digit",
     });
+    
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const period = hours >= 12 ? "PM" : "AM";
+    
+    // Convert to 12-hour format
+    hours = hours % 12 || 12;
+    const timeStr = `${hours}:${String(minutes).padStart(2, "0")} ${period}`;
+    
+    return `${dateStr}, ${timeStr}`;
+  };
 
   const statusLabel = appointment.status.replace(/_/g, " ");
   const statusStyle = STATUS_STYLES[appointment.status] ?? "bg-slate-100 text-slate-700";

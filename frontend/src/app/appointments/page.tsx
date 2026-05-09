@@ -36,7 +36,15 @@ function formatDate(iso: string) {
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-ET", { hour: "2-digit", minute: "2-digit" });
+  const date = new Date(iso);
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const period = hours >= 12 ? "PM" : "AM";
+  
+  // Convert to 12-hour format
+  hours = hours % 12 || 12;
+  
+  return `${hours}:${String(minutes).padStart(2, "0")} ${period}`;
 }
 
 export default function MyAppointmentsPage() {
