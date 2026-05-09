@@ -237,11 +237,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
+      <head>
+        <title>Ethio Barber - Premium Barbershop in Addis Ababa</title>
+        <meta name="description" content="Book your appointment at Ethiopia's premier barbershop chain. Expert barbers, modern styles, and exceptional service in Addis Ababa." />
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/logo.svg" />
+      </head>
       <body className="antialiased bg-slate-50 text-slate-900">
         <QueryClientProvider client={queryClient}>
           <header className="bg-white border-b sticky top-0 z-50 shadow-sm">
             <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
-              <Link href="/" className="text-2xl font-black tracking-tight text-slate-900 hover:text-blue-600 transition-colors">
+              <Link href="/" className="flex items-center gap-2 text-2xl font-black tracking-tight text-slate-900 hover:text-blue-600 transition-colors">
+                <img src="/logo.svg" alt="Ethio Barber Logo" className="w-10 h-10" />
                 Ethio<span className="text-blue-600">Barber</span>
               </Link>
               <NavLinks />

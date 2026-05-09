@@ -2,10 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/api";
 import { shopService } from "@/modules/shop/services";
 import type { AppointmentResponse } from "@/modules/appointment/types/appointment.types";
-import { Calendar, Clock, User, Filter, X } from "lucide-react";
+import { Calendar, Clock, User, Filter, X, ArrowLeft } from "lucide-react";
 
 const STATUS_STYLES: Record<string, string> = {
   PENDING_PAYMENT: "bg-yellow-100 text-yellow-800",
@@ -46,6 +47,7 @@ function formatTime(iso: string) {
 }
 
 export default function OwnerAppointmentsPage() {
+  const router = useRouter();
   const [selectedBranch, setSelectedBranch] = useState<number | null>(null);
   const [selectedBarber, setSelectedBarber] = useState<number | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -62,18 +64,23 @@ export default function OwnerAppointmentsPage() {
     queryFn: () => apiClient.get<any[]>("/barbers"),
   });
 
-  // Fetch appointments for selected branch
-  const { data: appointments = [], isLoading } = useQuery({
-    queryKey: ["branchAppointments", selectedBranch],
-    queryFn: () =>
-      selectedBranch
-        ? apiClient.get<AppointmentResponse[]>(`/appointments/shop/${selectedBranch}`)
-        : Promise.resolve([]),
-    enabled: !!selectedBranch,
+  // Fetch appointments for all branches
+  const { data: allAppointments = [], isLoading } = useQuery({
+    queryKey: ["allBranchAppointments", branches],
+    queryFn: async () => {
+      if (!branches || branches.length === 0) return [];
+      const promises = branches.map((branch) =>
+        apiClient.get<AppointmentResponse[]>(`/appointments/shop/${branch.id}`)
+      );
+      const results = await Promise.all(promises);
+      return results.flat();
+    },
+    enabled: branches.length > 0,
   });
 
   // Filter appointments
-  const filteredAppointments = appointments.filter((appt) => {
+  const filteredAppointments = allAppointments.filter((appt) => {
+    if (selectedBranch && appt.shopId !== selectedBranch) return false;
     if (selectedBarber && appt.barberProfileId !== selectedBarber) return false;
     if (selectedStatus && appt.status !== selectedStatus) return false;
     return true;
@@ -87,7 +94,16 @@ export default function OwnerAppointmentsPage() {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-slate-900 mb-6">All Appointments</h1>
+      {/* Header with Back Button */}
+      <div className="flex items-center gap-4 mb-6">
+        <button
+          onClick={() => router.back()}
+          className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+        >
+          <ArrowLeft className="w-6 h-6 text-slate-600" />
+        </button>
+        <h1 className="text-3xl font-bold text-slate-900">All Appointments</h1>
+      </div>
 
       {/* Filters */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
@@ -130,7 +146,6 @@ export default function OwnerAppointmentsPage() {
               value={selectedBarber || ""}
               onChange={(e) => setSelectedBarber(e.target.value ? Number(e.target.value) : null)}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              disabled={!selectedBranch}
             >
               <option value="">All Barbers</option>
               {allBarbers.map((barber) => (
@@ -161,13 +176,7 @@ export default function OwnerAppointmentsPage() {
       </div>
 
       {/* Appointments List */}
-      {!selectedBranch ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
-          <Calendar className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-600 text-lg mb-2">Select a branch to view appointments</p>
-          <p className="text-slate-500 text-sm">Use the filter above to choose a branch</p>
-        </div>
-      ) : isLoading ? (
+      {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-2xl border border-slate-200 p-6 animate-pulse h-32" />
@@ -177,13 +186,16 @@ export default function OwnerAppointmentsPage() {
         <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
           <Calendar className="w-16 h-16 text-slate-300 mx-auto mb-4" />
           <p className="text-slate-600 text-lg">No appointments found</p>
-          <p className="text-slate-500 text-sm mt-2">Try adjusting your filters</p>
+          <p className="text-slate-500 text-sm mt-2">
+            {allAppointments.length === 0 ? "No appointments have been booked yet" : "Try adjusting your filters"}
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-slate-600">
-              Showing {filteredAppointments.length} appointment{filteredAppointments.length !== 1 ? "s" : ""}
+              Showing {filteredAppointments.length} of {allAppointments.length} appointment
+              {filteredAppointments.length !== 1 ? "s" : ""}
             </p>
           </div>
 

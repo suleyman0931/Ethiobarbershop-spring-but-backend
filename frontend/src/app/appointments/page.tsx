@@ -50,10 +50,20 @@ export default function MyAppointmentsPage() {
   const queryClient = useQueryClient();
   const [openRatingForms, setOpenRatingForms] = useState<Set<number>>(new Set());
   const [justRated, setJustRated] = useState<Set<number>>(new Set());
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
   const { data: appointments = [], isLoading } = useQuery({
     queryKey: ["my-appointments"],
     queryFn: appointmentService.getMyAppointments,
+  });
+
+  // Filter appointments by status
+  const filteredAppointments = appointments.filter((appt: AppointmentResponse) => {
+    if (statusFilter === "ALL") return true;
+    if (statusFilter === "ACTIVE") {
+      return ["PENDING_PAYMENT", "PAYMENT_SUBMITTED", "CONFIRMED", "ASSIGNED_TO_BARBER"].includes(appt.status);
+    }
+    return appt.status === statusFilter;
   });
 
   const cancelMutation = useMutation({
@@ -101,6 +111,62 @@ export default function MyAppointmentsPage() {
         </Link>
       </div>
 
+      {/* Status Filter */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-4">
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={() => setStatusFilter("ALL")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              statusFilter === "ALL"
+                ? "bg-blue-600 text-white"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setStatusFilter("ACTIVE")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              statusFilter === "ACTIVE"
+                ? "bg-blue-600 text-white"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            Active
+          </button>
+          <button
+            onClick={() => setStatusFilter("CONFIRMED")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              statusFilter === "CONFIRMED"
+                ? "bg-blue-600 text-white"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            Approved
+          </button>
+          <button
+            onClick={() => setStatusFilter("COMPLETED")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              statusFilter === "COMPLETED"
+                ? "bg-blue-600 text-white"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            Completed
+          </button>
+          <button
+            onClick={() => setStatusFilter("CANCELED")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              statusFilter === "CANCELED"
+                ? "bg-blue-600 text-white"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            Canceled
+          </button>
+        </div>
+      </div>
+
       {appointments.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-2xl border border-slate-100">
           <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-4" />
@@ -112,7 +178,13 @@ export default function MyAppointmentsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {appointments.map((appt: AppointmentResponse) => (
+          {filteredAppointments.length === 0 ? (
+            <div className="text-center py-8 bg-white rounded-2xl border border-slate-100">
+              <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+              <p className="text-slate-500">No appointments match this filter.</p>
+            </div>
+          ) : (
+            filteredAppointments.map((appt: AppointmentResponse) => (
             <div key={appt.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
               {/* Header with Booking ID and Status */}
               <div className="flex items-start justify-between mb-3">

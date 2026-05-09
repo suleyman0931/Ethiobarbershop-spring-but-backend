@@ -1,0 +1,28 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Barber pole stripes background -->
+  <rect width="40" height="40" rx="8" fill="#1E40AF"/>
+  
+  <!-- Scissors -->
+  <g transform="translate(8, 10)">
+    <!-- Left blade -->
+    <ellipse cx="6" cy="6" rx="4" ry="5" fill="#FFFFFF" opacity="0.9"/>
+    <ellipse cx="6" cy="6" rx="2" ry="2.5" fill="#1E40AF"/>
+    
+    <!-- Right blade -->
+    <ellipse cx="18" cy="6" rx="4" ry="5" fill="#FFFFFF" opacity="0.9"/>
+    <ellipse cx="18" cy="6" rx="2" ry="2.5" fill="#1E40AF"/>
+    
+    <!-- Center pivot -->
+    <circle cx="12" cy="10" r="2" fill="#FFFFFF"/>
+    
+    <!-- Handles -->
+    <path d="M 6 6 L 12 10" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 18 6 L 12 10" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+    
+    <!-- Comb teeth at bottom -->
+    <rect x="8" y="18" width="1.5" height="4" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="10.5" y="18" width="1.5" height="4" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="13" y="18" width="1.5" height="4" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="15.5" y="18" width="1.5" height="4" fill="#FFFFFF" opacity="0.8"/>
+  </g>
+</svg>
