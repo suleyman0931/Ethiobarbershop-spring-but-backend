@@ -44,6 +44,7 @@ public class ImageServiceImpl implements ImageService {
   private final CustomerRepository customerRepository;
   private final ShopRepository shopRepository;
   private final Path uploadPath;
+  private final String baseUrl;
 
   public ImageServiceImpl(
           ImageRepository imageRepository,
@@ -51,7 +52,8 @@ public class ImageServiceImpl implements ImageService {
           BarberRepository barberRepository,
           CustomerRepository customerRepository,
           ShopRepository shopRepository,
-          @Value("${app.upload.dir:uploads/images}") String uploadDir
+          @Value("${app.upload.dir:uploads/images}") String uploadDir,
+          @Value("${app.base-url:http://localhost:8080}") String baseUrl
   ) throws IOException {
     this.imageRepository = imageRepository;
     this.ownerRepository = ownerRepository;
@@ -59,6 +61,7 @@ public class ImageServiceImpl implements ImageService {
     this.customerRepository = customerRepository;
     this.shopRepository = shopRepository;
     this.uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+    this.baseUrl = baseUrl;
 
     Files.createDirectories(this.uploadPath);
   }
@@ -194,7 +197,8 @@ public class ImageServiceImpl implements ImageService {
 
     Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-    String fileUrl = "/api/images/files/" + storedFileName;
+    // Generate absolute URL with base URL
+    String fileUrl = baseUrl + "/api/images/files/" + storedFileName;
 
     return new Image(
             storedFileName,
