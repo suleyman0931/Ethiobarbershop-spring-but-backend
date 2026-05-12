@@ -3,7 +3,9 @@ package com.barbershop.modules.shop.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.barbershop.modules.barber.model.entity.Barber;
 import com.barbershop.modules.shop.model.entity.BarberShopAssociation;
@@ -18,5 +20,7 @@ public interface BarberShopAssociationRepository extends JpaRepository<BarberSho
   boolean existsByShopAndBarber(Shop shop, Barber barber);
   
   // Delete all associations for a barber
+  @Modifying
+  @Transactional
   void deleteByBarberId(Long barberId);
 }

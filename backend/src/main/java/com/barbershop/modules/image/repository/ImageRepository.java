@@ -3,7 +3,9 @@ package com.barbershop.modules.image.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.barbershop.modules.image.model.entity.Image;
 
@@ -20,11 +22,19 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
   Optional<Image> findByFileName(String fileName);
 
+  @Modifying
+  @Transactional
   void deleteByOwnerId(Long ownerId);
 
+  @Modifying
+  @Transactional
   void deleteByBarberId(Long barberId);
 
+  @Modifying
+  @Transactional
   void deleteByCustomerId(Long customerId);
 
+  @Modifying
+  @Transactional
   void deleteByShopId(Long shopId);
 }

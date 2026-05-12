@@ -107,49 +107,66 @@ public class BarberServiceImpl implements BarberService {
         Barber barber = barberRepository.findById(barberId)
                 .orElseThrow(() -> new RuntimeException("Barber not found"));
         
-        // 1. Delete all ratings for this barber
-        List<com.barbershop.modules.rating.model.entity.Rating> ratings = ratingRepository.findByBarberOrderByCreatedAtDesc(barber);
-        if (!ratings.isEmpty()) {
-            ratingRepository.deleteAll(ratings);
-        }
-        
-        // 2. Delete all appointments for this barber
-        List<com.barbershop.modules.appointment.model.entity.Appointment> appointments = appointmentRepository.findByBarberProfile(barber);
-        if (!appointments.isEmpty()) {
-            appointmentRepository.deleteAll(appointments);
-        }
-        
-        // 3. Delete all shop applications for this barber
-        List<com.barbershop.modules.shop.model.entity.ShopApplication> applications = shopApplicationRepository.findAll().stream()
-                .filter(app -> app.getBarber().getId().equals(barberId))
-                .collect(Collectors.toList());
-        if (!applications.isEmpty()) {
-            shopApplicationRepository.deleteAll(applications);
-        }
-        
-        // 4. Delete barber's image if exists
-        imageRepository.deleteByBarberId(barberId);
-        
-        // 5. Find all associations for this barber and handle seats
-        List<Long> associationIds = associationRepository.findAll().stream()
-                .filter(assoc -> assoc.getBarber().getId().equals(barberId))
-                .map(assoc -> assoc.getId())
-                .collect(Collectors.toList());
-        
-        // For each association, null out the association_id in seats
-        for (Long associationId : associationIds) {
-            List<Seat> seats = seatRepository.findAllByAssociationId(associationId);
-            for (Seat seat : seats) {
-                seat.setAssociation(null);
-                seatRepository.save(seat);
+        try {
+            // 1. Delete all ratings for this barber
+            List<com.barbershop.modules.rating.model.entity.Rating> ratings = ratingRepository.findByBarberOrderByCreatedAtDesc(barber);
+            if (!ratings.isEmpty()) {
+                ratingRepository.deleteAll(ratings);
+                ratingRepository.flush();
             }
+            
+            // 2. Delete all appointments for this barber
+            List<com.barbershop.modules.appointment.model.entity.Appointment> appointments = appointmentRepository.findByBarberProfile(barber);
+            if (!appointments.isEmpty()) {
+                appointmentRepository.deleteAll(appointments);
+                appointmentRepository.flush();
+            }
+            
+            // 3. Delete all shop applications for this barber
+            List<com.barbershop.modules.shop.model.entity.ShopApplication> applications = shopApplicationRepository.findAll().stream()
+                    .filter(app -> app.getBarber().getId().equals(barberId))
+                    .collect(Collectors.toList());
+            if (!applications.isEmpty()) {
+                shopApplicationRepository.deleteAll(applications);
+                shopApplicationRepository.flush();
+            }
+            
+            // 4. Delete barber's image if exists
+            try {
+                imageRepository.deleteByBarberId(barberId);
+            } catch (Exception e) {
+                // Image might not exist, continue
+            }
+            
+            // 5. Find all associations for this barber and handle seats
+            List<com.barbershop.modules.shop.model.entity.BarberShopAssociation> associations = 
+                    associationRepository.findAll().stream()
+                    .filter(assoc -> assoc.getBarber().getId().equals(barberId))
+                    .collect(Collectors.toList());
+            
+            // For each association, null out the association_id in seats
+            for (com.barbershop.modules.shop.model.entity.BarberShopAssociation association : associations) {
+                List<Seat> seats = seatRepository.findAllByAssociationId(association.getId());
+                for (Seat seat : seats) {
+                    seat.setAssociation(null);
+                    seatRepository.save(seat);
+                }
+            }
+            seatRepository.flush();
+            
+            // 6. Delete all associations for this barber
+            if (!associations.isEmpty()) {
+                associationRepository.deleteAll(associations);
+                associationRepository.flush();
+            }
+            
+            // 7. Finally, delete the barber
+            barberRepository.delete(barber);
+            barberRepository.flush();
+            
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete barber: " + e.getMessage(), e);
         }
-        
-        // 6. Delete all associations for this barber
-        associationRepository.deleteByBarberId(barberId);
-        
-        // 7. Finally, delete the barber
-        barberRepository.delete(barber);
     }
 
     @Override
