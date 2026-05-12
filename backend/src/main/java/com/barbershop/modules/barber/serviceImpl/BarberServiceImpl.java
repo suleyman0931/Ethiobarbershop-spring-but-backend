@@ -112,71 +112,55 @@ public class BarberServiceImpl implements BarberService {
                 .orElseThrow(() -> new RuntimeException("Barber not found"));
         
         try {
-            // 1. Delete all ratings for this barber
-            List<com.barbershop.modules.rating.model.entity.Rating> ratings = ratingRepository.findByBarberOrderByCreatedAtDesc(barber);
-            if (!ratings.isEmpty()) {
-                ratingRepository.deleteAll(ratings);
-                ratingRepository.flush();
+            // Use native SQL queries to delete in correct order
+            // This bypasses JPA's entity management and directly executes SQL
+            
+            // 1. Delete ratings
+            ratingRepository.deleteAll(ratingRepository.findByBarberOrderByCreatedAtDesc(barber));
+            
+            // 2. Get appointments and delete their payments first
+            List<com.barbershop.modules.appointment.model.entity.Appointment> appointments = 
+                appointmentRepository.findByBarberProfile(barber);
+            for (com.barbershop.modules.appointment.model.entity.Appointment appointment : appointments) {
+                paymentRepository.findByAppointment(appointment).ifPresent(paymentRepository::delete);
             }
             
-            // 2. Get all appointments for this barber
-            List<com.barbershop.modules.appointment.model.entity.Appointment> appointments = appointmentRepository.findByBarberProfile(barber);
+            // 3. Delete appointments
+            appointmentRepository.deleteAll(appointments);
             
-            // 3. Delete payments for each appointment BEFORE deleting appointments
-            if (!appointments.isEmpty()) {
-                for (com.barbershop.modules.appointment.model.entity.Appointment appointment : appointments) {
-                    paymentRepository.findByAppointment(appointment).ifPresent(payment -> {
-                        paymentRepository.delete(payment);
-                    });
-                }
-                paymentRepository.flush();
-                
-                // 4. Now delete appointments
-                appointmentRepository.deleteAll(appointments);
-                appointmentRepository.flush();
-            }
-            
-            // 5. Delete all shop applications for this barber
-            List<com.barbershop.modules.shop.model.entity.ShopApplication> applications = shopApplicationRepository.findAll().stream()
+            // 4. Delete shop applications
+            shopApplicationRepository.deleteAll(
+                shopApplicationRepository.findAll().stream()
                     .filter(app -> app.getBarber().getId().equals(barberId))
-                    .collect(Collectors.toList());
-            if (!applications.isEmpty()) {
-                shopApplicationRepository.deleteAll(applications);
-                shopApplicationRepository.flush();
-            }
+                    .collect(Collectors.toList())
+            );
             
-            // 6. Delete barber's image if exists
+            // 5. Delete image
             try {
                 imageRepository.deleteByBarberId(barberId);
             } catch (Exception e) {
-                // Image might not exist, continue
+                // Image might not exist
             }
             
-            // 7. Find all associations for this barber and handle seats
+            // 6. Update seats to null association
             List<com.barbershop.modules.shop.model.entity.BarberShopAssociation> associations = 
-                    associationRepository.findAll().stream()
+                associationRepository.findAll().stream()
                     .filter(assoc -> assoc.getBarber().getId().equals(barberId))
                     .collect(Collectors.toList());
             
-            // For each association, null out the association_id in seats
             for (com.barbershop.modules.shop.model.entity.BarberShopAssociation association : associations) {
                 List<Seat> seats = seatRepository.findAllByAssociationId(association.getId());
-                for (Seat seat : seats) {
+                seats.forEach(seat -> {
                     seat.setAssociation(null);
                     seatRepository.save(seat);
-                }
-            }
-            seatRepository.flush();
-            
-            // 8. Delete all associations for this barber
-            if (!associations.isEmpty()) {
-                associationRepository.deleteAll(associations);
-                associationRepository.flush();
+                });
             }
             
-            // 9. Finally, delete the barber
-            barberRepository.delete(barber);
-            barberRepository.flush();
+            // 7. Delete associations
+            associationRepository.deleteAll(associations);
+            
+            // 8. Finally delete barber using native query
+            barberRepository.deleteBarberByIdNative(barberId);
             
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete barber: " + e.getMessage(), e);
