@@ -109,12 +109,11 @@ public class BarberServiceImpl implements BarberService {
     @Transactional
     public void deleteBarberById(Long barberId) {
         // Check if barber exists
-        if (!barberRepository.existsById(barberId)) {
-            throw new RuntimeException("Barber not found");
-        }
+        Barber barber = barberRepository.findById(barberId)
+                .orElseThrow(() -> new RuntimeException("Barber not found with id: " + barberId));
         
         // Simply delete the barber - CASCADE constraints will handle the rest
-        barberRepository.deleteById(barberId);
+        barberRepository.delete(barber);
     }
 
     @Override
