@@ -14,6 +14,7 @@ import com.barbershop.modules.shop.repository.ShopApplicationRepository;
 import com.barbershop.modules.appointment.repository.AppointmentRepository;
 import com.barbershop.modules.rating.repository.RatingRepository;
 import com.barbershop.modules.image.repository.ImageRepository;
+import com.barbershop.modules.payment.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ public class BarberServiceImpl implements BarberService {
     private final AppointmentRepository appointmentRepository;
     private final RatingRepository ratingRepository;
     private final ImageRepository imageRepository;
+    private final PaymentRepository paymentRepository;
 
     public BarberServiceImpl(BarberRepository barberRepository, UserRepository userRepository,
                              BarberShopAssociationRepository associationRepository,
@@ -38,7 +40,8 @@ public class BarberServiceImpl implements BarberService {
                              ShopApplicationRepository shopApplicationRepository,
                              AppointmentRepository appointmentRepository,
                              RatingRepository ratingRepository,
-                             ImageRepository imageRepository) {
+                             ImageRepository imageRepository,
+                             PaymentRepository paymentRepository) {
         this.barberRepository = barberRepository;
         this.userRepository = userRepository;
         this.associationRepository = associationRepository;
@@ -47,6 +50,7 @@ public class BarberServiceImpl implements BarberService {
         this.appointmentRepository = appointmentRepository;
         this.ratingRepository = ratingRepository;
         this.imageRepository = imageRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     @Override
@@ -115,14 +119,24 @@ public class BarberServiceImpl implements BarberService {
                 ratingRepository.flush();
             }
             
-            // 2. Delete all appointments for this barber
+            // 2. Get all appointments for this barber
             List<com.barbershop.modules.appointment.model.entity.Appointment> appointments = appointmentRepository.findByBarberProfile(barber);
+            
+            // 3. Delete payments for each appointment BEFORE deleting appointments
             if (!appointments.isEmpty()) {
+                for (com.barbershop.modules.appointment.model.entity.Appointment appointment : appointments) {
+                    paymentRepository.findByAppointment(appointment).ifPresent(payment -> {
+                        paymentRepository.delete(payment);
+                    });
+                }
+                paymentRepository.flush();
+                
+                // 4. Now delete appointments
                 appointmentRepository.deleteAll(appointments);
                 appointmentRepository.flush();
             }
             
-            // 3. Delete all shop applications for this barber
+            // 5. Delete all shop applications for this barber
             List<com.barbershop.modules.shop.model.entity.ShopApplication> applications = shopApplicationRepository.findAll().stream()
                     .filter(app -> app.getBarber().getId().equals(barberId))
                     .collect(Collectors.toList());
@@ -131,14 +145,14 @@ public class BarberServiceImpl implements BarberService {
                 shopApplicationRepository.flush();
             }
             
-            // 4. Delete barber's image if exists
+            // 6. Delete barber's image if exists
             try {
                 imageRepository.deleteByBarberId(barberId);
             } catch (Exception e) {
                 // Image might not exist, continue
             }
             
-            // 5. Find all associations for this barber and handle seats
+            // 7. Find all associations for this barber and handle seats
             List<com.barbershop.modules.shop.model.entity.BarberShopAssociation> associations = 
                     associationRepository.findAll().stream()
                     .filter(assoc -> assoc.getBarber().getId().equals(barberId))
@@ -154,13 +168,13 @@ public class BarberServiceImpl implements BarberService {
             }
             seatRepository.flush();
             
-            // 6. Delete all associations for this barber
+            // 8. Delete all associations for this barber
             if (!associations.isEmpty()) {
                 associationRepository.deleteAll(associations);
                 associationRepository.flush();
             }
             
-            // 7. Finally, delete the barber
+            // 9. Finally, delete the barber
             barberRepository.delete(barber);
             barberRepository.flush();
             
