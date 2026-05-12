@@ -7,7 +7,6 @@ import com.barbershop.modules.barber.dto.response.BarberResponse;
 import com.barbershop.modules.barber.model.entity.Barber;
 import com.barbershop.modules.barber.repository.BarberRepository;
 import com.barbershop.modules.barber.service.BarberService;
-import com.barbershop.modules.shop.model.entity.BarberShopAssociation;
 import com.barbershop.modules.shop.model.entity.Seat;
 import com.barbershop.modules.shop.repository.BarberShopAssociationRepository;
 import com.barbershop.modules.shop.repository.SeatRepository;
@@ -120,6 +119,22 @@ public class BarberServiceImpl implements BarberService {
         Barber barber = barberRepository.findById(barberId)
                 .orElseThrow(() -> new RuntimeException("Barber not found"));
         return toResponse(barber);
+    }
+
+    @Override
+    @Transactional
+    public BarberResponse updateBarberById(Long barberId, BarberRequest request) {
+        Barber barber = barberRepository.findById(barberId)
+                .orElseThrow(() -> new RuntimeException("Barber not found"));
+
+        barber.setFirstName(request.getFirstName());
+        barber.setLastName(request.getLastName());
+        barber.setPhoneNumber(request.getPhoneNumber());
+        barber.setSummary(request.getSummary());
+        barber.setSkills(request.getSkills());
+        barber.setExperienceYears(request.getExperienceYears());
+
+        return toResponse(barberRepository.save(barber));
     }
 
     @Override

@@ -52,6 +52,15 @@ public class BarberController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/{barberId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<BarberResponse> updateBarberById(
+            @PathVariable Long barberId,
+            @RequestBody BarberRequest request) {
+        BarberResponse response = barberService.updateBarberById(barberId, request);
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/me")
     @PreAuthorize("hasRole('BARBER')")
     public ResponseEntity<?> deleteBarberProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {

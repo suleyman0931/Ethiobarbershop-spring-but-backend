@@ -43,6 +43,16 @@ public interface BarberService {
     
     BarberResponse getBarberProfileById(Long barberId);
     
+    /**
+     * Update a barber profile by barber ID (for owners).
+     *
+     * @param barberId the ID of the barber to be updated
+     * @param request the updated details for the barber
+     * @return a BarberResponse containing the updated barber details
+     * @note for owner
+     */
+    BarberResponse updateBarberById(Long barberId, BarberRequest request);
+    
     List<BarberResponse> getAllBarbers();
     
     List<BarberResponse> getBarbersByShopId(Long shopId);
