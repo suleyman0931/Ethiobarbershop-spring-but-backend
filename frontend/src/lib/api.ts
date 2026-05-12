@@ -47,11 +47,18 @@ export async function apiRequest<T>(
     if (newToken) {
       return apiRequest<T>(endpoint, options, false);
     }
-    // Refresh failed — clear auth and redirect to login
+    // Refresh failed — clear auth and redirect to login (only if not on public pages)
     if (typeof window !== "undefined") {
+      const publicPaths = ['/', '/about', '/login', '/signup'];
+      const currentPath = window.location.pathname;
+      
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
+      
+      // Only redirect if not on a public page
+      if (!publicPaths.includes(currentPath)) {
+        window.location.href = "/login";
+      }
     }
     throw new Error("Session expired. Please log in again.");
   }
