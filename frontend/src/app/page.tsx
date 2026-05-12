@@ -8,6 +8,8 @@ import type { BarberResponse } from "@/modules/barber/types/barber.types";
 import { useAuthStore } from "@/stores/auth.store";
 import { WeatherWidget } from "@/components/weather/WeatherWidget";
 import ImageGallery from "@/components/gallery/ImageGallery";
+import { TopRatedBarbers } from "@/components/home/TopRatedBarbers";
+import { CustomerReviews } from "@/components/home/CustomerReviews";
 
 export default function Home() {
   const { user } = useAuthStore();
@@ -143,6 +145,12 @@ export default function Home() {
 
       {/* Image Gallery */}
       <ImageGallery />
+
+      {/* Top Rated Barbers */}
+      <TopRatedBarbers />
+
+      {/* Customer Reviews */}
+      <CustomerReviews />
 
       {/* Features */}
       <section>
