@@ -8,12 +8,13 @@ import type { BarberResponse } from "@/modules/barber/types/barber.types";
 import { useAuthStore } from "@/stores/auth.store";
 import { WeatherWidget } from "@/components/weather/WeatherWidget";
 import ImageGallery from "@/components/gallery/ImageGallery";
-import { TopRatedBarbers } from "@/components/home/TopRatedBarbers";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
+import { BarberCardsWithRatings } from "@/components/barbers/BarberCardsWithRatings";
 
 export default function Home() {
   const { user } = useAuthStore();
   const isCustomer = user?.roles.includes("ROLE_CUSTOMER");
+  const isGuest = !user; // User is not logged in
 
   const { data: barbers = [], isLoading } = useQuery({
     queryKey: ["barbers"],
@@ -146,9 +147,6 @@ export default function Home() {
       {/* Image Gallery */}
       <ImageGallery />
 
-      {/* Top Rated Barbers */}
-      <TopRatedBarbers />
-
       {/* Customer Reviews */}
       <CustomerReviews />
 
@@ -253,33 +251,7 @@ export default function Home() {
             <p className="text-slate-500">No barbers available yet. Check back soon!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {barbers.map((barber) => (
-              <div key={barber.barberId} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 hover:shadow-lg transition-all group">
-                <div className="w-20 h-20 bg-gradient-to-br from-slate-900 to-slate-700 rounded-full flex items-center justify-center text-white font-bold text-2xl mb-6 group-hover:scale-110 transition-transform">
-                  {barber.firstName[0]}{barber.lastName[0]}
-                </div>
-                <h3 className="font-bold text-slate-900 text-lg mb-1">
-                  {barber.firstName} {barber.lastName}
-                </h3>
-                {barber.skills && (
-                  <p className="text-sm text-slate-600 mt-2 mb-3">{barber.skills}</p>
-                )}
-                {barber.experienceYears > 0 && (
-                  <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
-                    <Award className="w-4 h-4" />
-                    <span>{barber.experienceYears} years experience</span>
-                  </div>
-                )}
-                {isCustomer && (
-                  <Link href={`/appointments/book?barberId=${barber.barberId}`}
-                    className="mt-4 block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-sm hover:shadow-md">
-                    Book with {barber.firstName}
-                  </Link>
-                )}
-              </div>
-            ))}
-          </div>
+          <BarberCardsWithRatings barbers={barbers} isCustomer={isCustomer} isGuest={isGuest} />
         )}
       </section>
 
