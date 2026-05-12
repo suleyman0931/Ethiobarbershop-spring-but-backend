@@ -1,6 +1,6 @@
 # Ethio Barber - Final Year Project Presentation
 
-**Developer**: Suleyman Abdu Mohammed  
+**Project Team**: Suleyman Abdu Mohammed & Team  
 **Contact**: +251 931 798 929 | suleymanabdu0931@gmail.com  
 **Project**: Ethio Barber - Barbershop Management System  
 **Date**: May 2026  
@@ -731,33 +731,33 @@ NEXT_PUBLIC_API_URL=https://ethiobarbershop-spring-but-backend-production.up.rai
 
 ### Challenge 1: CORS Issues
 **Problem**: Frontend couldn't access backend API  
-**Solution**: Configured CORS in Spring Security with allowed origins  
+**Solution**: We configured CORS in Spring Security with allowed origins  
 **Learning**: Cross-origin security policies
 
 ### Challenge 2: JWT Token Expiration
 **Problem**: Users logged out unexpectedly  
-**Solution**: Implemented refresh token mechanism with auto-refresh  
+**Solution**: We implemented refresh token mechanism with auto-refresh  
 **Learning**: Token lifecycle management
 
 ### Challenge 3: Payment Screenshot 404 Error
 **Problem**: Screenshots showed 404 when viewing  
 **Root Cause**: Relative URLs instead of absolute URLs  
-**Solution**: Modified ImageServiceImpl to generate absolute URLs with base URL  
+**Solution**: We modified ImageServiceImpl to generate absolute URLs with base URL  
 **Learning**: URL handling in distributed systems
 
 ### Challenge 4: Memory Issues on Railway
 **Problem**: Backend crashed with OutOfMemoryError  
-**Solution**: Optimized Java memory settings with JAVA_TOOL_OPTIONS  
+**Solution**: We optimized Java memory settings with JAVA_TOOL_OPTIONS  
 **Learning**: JVM memory tuning for cloud environments
 
 ### Challenge 5: Appointment Double-Booking
 **Problem**: Same time slot booked twice  
-**Solution**: Added unique constraint on (barber, date, time) in database  
+**Solution**: We added unique constraint on (barber, date, time) in database  
 **Learning**: Database constraints and transaction isolation
 
 ### Challenge 6: Deployment Configuration
 **Problem**: Different configs for development and production  
-**Solution**: Used environment variables for all environment-specific settings  
+**Solution**: We used environment variables for all environment-specific settings  
 **Learning**: Environment configuration best practices
 
 ---
@@ -791,6 +791,7 @@ NEXT_PUBLIC_API_URL=https://ethiobarbershop-spring-but-backend-production.up.rai
 ✅ API design and documentation  
 ✅ Version control with Git  
 ✅ Problem-solving and debugging  
+✅ Team collaboration and project management  
 
 ---
 
@@ -817,16 +818,16 @@ NEXT_PUBLIC_API_URL=https://ethiobarbershop-spring-but-backend-production.up.rai
 **A**: Passwords hashed with BCrypt, HTTPS encryption, privacy best practices followed.
 
 **Q: How long did it take to build?**  
-**A**: Several months including learning, development, testing, and deployment.
+**A**: Several months including learning, development, testing, and deployment as a team.
 
 **Q: Can this scale to many branches?**  
-**A**: Yes, architecture supports multiple branches. For large scale, would add caching and optimization.
+**A**: Yes, our architecture supports multiple branches. For large scale, we would add caching and optimization.
 
 **Q: What was the most difficult part?**  
-**A**: Implementing secure JWT authentication and managing role-based authorization across the application.
+**A**: Implementing secure JWT authentication and managing role-based authorization across the application was our biggest challenge.
 
 **Q: What would you do differently?**  
-**A**: Start with better database design, write more tests earlier, use Docker for local development.
+**A**: We would start with better database design, write more tests earlier, and use Docker for local development from the beginning.
 
 ---
 
@@ -853,7 +854,7 @@ NEXT_PUBLIC_API_URL=https://ethiobarbershop-spring-but-backend-production.up.rai
 
 ## 📞 CONTACT
 
-**Developer**: Suleyman Abdu Mohammed  
+**Project Team**: Suleyman Abdu Mohammed & Team  
 **Phone**: +251 931 798 929  
 **Email**: suleymanabdu0931@gmail.com  
 
@@ -867,7 +868,7 @@ NEXT_PUBLIC_API_URL=https://ethiobarbershop-spring-but-backend-production.up.rai
 
 ## 🎤 CLOSING STATEMENT
 
-> "Thank you for your attention. Ethio Barber demonstrates a complete, production-ready web application that solves real business problems using modern technologies and best practices. The system is currently live, fully functional, and ready to serve barbershops across Ethiopia. I'm proud of what I've built and excited about its potential impact. I'm now happy to answer any questions."
+> "Thank you for your attention. Ethio Barber demonstrates a complete, production-ready web application that solves real business problems using modern technologies and best practices. The system is currently live, fully functional, and ready to serve barbershops across Ethiopia. We're proud of what we've built and excited about its potential impact. We're now happy to answer any questions."
 
 ---
 
