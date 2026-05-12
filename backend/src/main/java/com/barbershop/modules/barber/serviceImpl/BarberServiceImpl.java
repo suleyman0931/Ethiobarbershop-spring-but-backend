@@ -108,41 +108,42 @@ public class BarberServiceImpl implements BarberService {
     @Override
     @Transactional
     public void deleteBarberById(Long barberId) {
-        Barber barber = barberRepository.findById(barberId)
-                .orElseThrow(() -> new RuntimeException("Barber not found"));
+        // Check if barber exists
+        if (!barberRepository.existsById(barberId)) {
+            throw new RuntimeException("Barber not found");
+        }
         
         try {
-            // Use native SQL queries to delete in correct order
-            // This bypasses JPA's entity management and directly executes SQL
+            // Use stored procedure for cascade deletion
+            // This handles all foreign key constraints properly
+            barberRepository.deleteBarberCascade(barberId);
+        } catch (Exception e) {
+            // If stored procedure doesn't exist, fall back to manual deletion
+            Barber barber = barberRepository.findById(barberId)
+                    .orElseThrow(() -> new RuntimeException("Barber not found"));
             
-            // 1. Delete ratings
+            // Manual cascade deletion
             ratingRepository.deleteAll(ratingRepository.findByBarberOrderByCreatedAtDesc(barber));
             
-            // 2. Get appointments and delete their payments first
             List<com.barbershop.modules.appointment.model.entity.Appointment> appointments = 
                 appointmentRepository.findByBarberProfile(barber);
             for (com.barbershop.modules.appointment.model.entity.Appointment appointment : appointments) {
                 paymentRepository.findByAppointment(appointment).ifPresent(paymentRepository::delete);
             }
-            
-            // 3. Delete appointments
             appointmentRepository.deleteAll(appointments);
             
-            // 4. Delete shop applications
             shopApplicationRepository.deleteAll(
                 shopApplicationRepository.findAll().stream()
                     .filter(app -> app.getBarber().getId().equals(barberId))
                     .collect(Collectors.toList())
             );
             
-            // 5. Delete image
             try {
                 imageRepository.deleteByBarberId(barberId);
-            } catch (Exception e) {
+            } catch (Exception ex) {
                 // Image might not exist
             }
             
-            // 6. Update seats to null association
             List<com.barbershop.modules.shop.model.entity.BarberShopAssociation> associations = 
                 associationRepository.findAll().stream()
                     .filter(assoc -> assoc.getBarber().getId().equals(barberId))
@@ -156,14 +157,8 @@ public class BarberServiceImpl implements BarberService {
                 });
             }
             
-            // 7. Delete associations
             associationRepository.deleteAll(associations);
-            
-            // 8. Finally delete barber using native query
             barberRepository.deleteBarberByIdNative(barberId);
-            
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete barber: " + e.getMessage(), e);
         }
     }
 

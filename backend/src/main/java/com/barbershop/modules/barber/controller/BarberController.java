@@ -46,7 +46,6 @@ public class BarberController {
     }
 
     @GetMapping("/{barberId}")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<BarberResponse> getBarberProfileById(@PathVariable Long barberId) {
         BarberResponse response = barberService.getBarberProfileById(barberId);
         return ResponseEntity.ok(response);
